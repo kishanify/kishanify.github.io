@@ -90,6 +90,37 @@ dialog[open]{display:flex;flex-direction:column;gap:12px}
 @media (max-width:820px){.hero .wrap,.about .wrap{grid-template-columns:1fr}.stack{max-width:480px}}
 @media (max-width:640px){.grid{columns:2;column-gap:12px}.work{margin-bottom:20px}figcaption{flex-direction:column;gap:2px}.c{text-align:left}nav{gap:14px}.bar button{margin:0 6px 0 0}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn:hover{transform:none}}
+.review{border-top:1px solid var(--line)}
+.review .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 48px}
+.review p{margin:12px 0 0;color:var(--muted);max-width:52ch}
+#rv{position:fixed;margin:auto;width:min(520px,calc(100% - 32px));height:auto;max-height:calc(100dvh - 32px);padding:28px;border:1px solid var(--line);background:var(--surface);overflow:auto;border-radius:2px}
+#rv[open]{display:block}
+#rv::backdrop{background:rgba(15,18,34,.6)}
+#rv h3{margin:0;font:800 2rem/1 var(--display)}
+.rv-sub{margin:8px 0 0;color:var(--muted)}
+#rv label,#rv legend{display:block;margin-top:16px;padding:0;font-weight:600;font-size:.95rem}
+#rv input[type=text],#rv textarea{display:block;width:100%;margin-top:6px;padding:12px;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:2px}
+#rv fieldset{border:0;margin:0;padding:0;min-width:0}
+.stars{display:flex;flex-direction:row-reverse;justify-content:flex-end;margin-top:2px}
+.stars input{position:absolute;opacity:0;width:1px;height:1px}
+#rv .stars label{margin:0;padding:0 3px;font-size:2.1rem;line-height:1;font-weight:400;color:var(--line);cursor:pointer}
+.stars input:checked~label,.stars label:hover,.stars label:hover~label{color:#E5A800!important}
+.stars input:focus-visible+label{outline:3px solid var(--blue);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hp{position:absolute;left:-9999px}
+.rv-err{margin:16px 0 0;padding-left:10px;border-left:3px solid #D93025;font-weight:600}
+.rv-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+#rv-thanks{position:relative;text-align:center;padding:36px 8px;animation:pop .5s ease both}
+#rv-thanks>:not(.sparks){position:relative}
+.sparks{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sparks i{position:absolute;background:var(--yellow);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);opacity:0;animation:tw 2s ease-in-out infinite}
+.sparks i.b{background:var(--blue)}.sparks i.k{background:var(--ink)}
+#rv .shine{margin:0;font:900 clamp(2.6rem,9vw,3.6rem)/1 var(--display);color:var(--ink);background:linear-gradient(100deg,var(--ink) 35%,var(--blue) 45%,#E5A800 50%,var(--blue) 55%,var(--ink) 65%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2.6s linear infinite}
+.thx{max-width:30ch;margin:16px auto 24px;font-size:1.15rem}
+@keyframes tw{0%{opacity:0;transform:scale(0) rotate(0)}50%{opacity:1;transform:scale(1) rotate(90deg)}100%{opacity:0;transform:scale(0) rotate(180deg)}}
+@keyframes shine{from{background-position:100% 0}to{background-position:0 0}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.96)}}
+@media (prefers-reduced-motion:reduce){.sparks i{animation:none;opacity:.85}#rv .shine{animation:none;background:none;-webkit-text-fill-color:currentColor}#rv-thanks{animation:none}}
 </style>
 </head>
 <body>
@@ -137,6 +168,10 @@ dialog[open]{display:flex;flex-direction:column;gap:12px}
 <p>Day to day I work in digital marketing, running paid campaigns and reading the analytics, so I design with results in mind.</p>
 </div>
 </div></section>
+<section class="review" id="review"><div class="wrap">
+<div><h2>Drop your opinion</h2><p>Seen something you like, or something I could do better? Tell me what you think of the work.</p></div>
+<button type="button" class="btn" id="rv-open">Write a review</button>
+</div></section>
 <section class="contact" id="contact"><div class="wrap"><div>
 <h2>Hiring a social media manager?</h2>
 <p>Send me a message on Instagram or LinkedIn.</p>
@@ -167,6 +202,58 @@ function step(d){i=(i+d+cur.length)%cur.length;show()}
 lb.addEventListener('click',function(e){var a=e.target.dataset.a;
 if(a==='close'||e.target===lb)lb.close();else if(a==='next')step(1);else if(a==='prev')step(-1)});
 lb.addEventListener('keydown',function(e){if(e.key==='ArrowRight')step(1);else if(e.key==='ArrowLeft')step(-1)});
+})();
+</script>
+<dialog id="rv" aria-labelledby="rv-t">
+<div id="rv-formwrap">
+<h3 id="rv-t">Write a review</h3>
+<p class="rv-sub">It takes a minute, and it goes straight to me.</p>
+<form id="rv-form" novalidate>
+<label for="rv-name">Your name</label>
+<input type="text" id="rv-name" name="name" autocomplete="name" maxlength="80">
+<fieldset><legend>Your opinion</legend>
+<div class="stars" role="radiogroup" aria-label="Star rating"><input type="radio" id="s5" name="rating" value="5"><label for="s5"><span class="sr">5 stars</span>&#9733;</label><input type="radio" id="s4" name="rating" value="4"><label for="s4"><span class="sr">4 stars</span>&#9733;</label><input type="radio" id="s3" name="rating" value="3"><label for="s3"><span class="sr">3 stars</span>&#9733;</label><input type="radio" id="s2" name="rating" value="2"><label for="s2"><span class="sr">2 stars</span>&#9733;</label><input type="radio" id="s1" name="rating" value="1"><label for="s1"><span class="sr">1 star</span>&#9733;</label></div>
+<input type="text" name="opinion" maxlength="140" placeholder="In one line, what did you think?" aria-label="Your opinion in one line">
+</fieldset>
+<label for="rv-msg">Message to Kishan</label>
+<textarea id="rv-msg" name="message" rows="4" maxlength="1000"></textarea>
+<input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+<p class="rv-err" role="alert" hidden></p>
+<div class="rv-actions"><button type="submit" class="btn">Send review</button><button type="button" class="btn alt" data-close>Cancel</button></div>
+</form>
+</div>
+<div id="rv-thanks" hidden>
+<div class="sparks" aria-hidden="true"></div>
+<h3 class="shine">Thank you!</h3>
+<p class="thx">Thanks for your comment. Your words mean a lot to me.</p>
+<button type="button" class="btn" data-close>Close</button>
+</div>
+</dialog>
+<script>
+(function(){
+var WEB3FORMS_KEY="PASTE_YOUR_ACCESS_KEY_HERE";
+var $=function(s){return document.querySelector(s)},rv=$('#rv'),form=$('#rv-form'),fw=$('#rv-formwrap'),th=$('#rv-thanks'),er=$('.rv-err'),btn=form.querySelector('[type=submit]');
+function open(){form.reset();er.hidden=true;fw.hidden=false;th.hidden=true;btn.disabled=false;btn.textContent='Send review';rv.showModal();document.body.style.overflow='hidden'}
+function fail(m){er.textContent=m;er.hidden=false}
+function thanks(){var box=th.querySelector('.sparks');box.textContent='';
+for(var k=0;k<24;k++){var s=document.createElement('i'),z=8+Math.random()*18;
+s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;animation-delay:'+Math.random()*2.4+'s;animation-duration:'+(1.6+Math.random()*1.6)+'s';
+s.className=['','b','k'][k%3];box.appendChild(s)}
+fw.hidden=true;th.hidden=false;th.querySelector('button').focus()}
+$('#rv-open').addEventListener('click',open);
+rv.addEventListener('click',function(e){if(e.target.hasAttribute('data-close'))rv.close()});
+rv.addEventListener('close',function(){document.body.style.overflow=''});
+form.addEventListener('submit',function(e){e.preventDefault();er.hidden=true;
+var d=new FormData(form);if(d.get('botcheck'))return;
+var name=(d.get('name')||'').trim(),msg=(d.get('message')||'').trim(),rating=d.get('rating');
+if(!name||!rating||!msg){fail('Please add your name, a star rating and a message.');return}
+if(WEB3FORMS_KEY.indexOf('PASTE')===0){fail('Reviews are not switched on yet. Please message me on Instagram instead.');return}
+btn.disabled=true;btn.textContent='Sending...';
+fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+body:JSON.stringify({access_key:WEB3FORMS_KEY,subject:'New portfolio review from '+name,from_name:'Portfolio reviews',name:name,rating:rating+' out of 5',opinion:(d.get('opinion')||'').trim(),message:msg})})
+.then(function(r){return r.json()}).then(function(j){if(!j.success)throw 0;thanks()})
+.catch(function(){fail('Something went wrong. Please try again, or message me on Instagram.');btn.disabled=false;btn.textContent='Send review'})});
+if(location.hash==='#demo-thanks'){open();thanks()}
 })();
 </script>
 </body>
